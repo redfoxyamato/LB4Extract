@@ -1,0 +1,5 @@
+C:\Users\yo\Documents\Visual Studio 2015\Projects\LB4Extract\LB4Extract\bin\Debug\LB4Extract.dll
+C:\Users\yo\Documents\Visual Studio 2015\Projects\LB4Extract\LB4Extract\bin\Debug\LB4Extract.pdb
+C:\Users\yo\Documents\Visual Studio 2015\Projects\LB4Extract\LB4Extract\obj\Debug\LB4Extract.csprojResolveAssemblyReference.cache
+C:\Users\yo\Documents\Visual Studio 2015\Projects\LB4Extract\LB4Extract\obj\Debug\LB4Extract.dll
+C:\Users\yo\Documents\Visual Studio 2015\Projects\LB4Extract\LB4Extract\obj\Debug\LB4Extract.pdb

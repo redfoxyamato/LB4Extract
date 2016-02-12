@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace LB4Extract
@@ -31,6 +32,14 @@ namespace LB4Extract
                 list.Add(source[firstIndex + i]);
             }
             return list.ToArray();
+        }
+        public static void debug(string str)
+        {
+            Console.WriteLine(str);
+        }
+        public static string formatInt(uint i)
+        {
+            return "0x" + Convert.ToString(i, 16).ToUpper() + " (" + i + ")";
         }
     }
 }

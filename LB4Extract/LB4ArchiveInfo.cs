@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System;
 
 namespace LB4Extract
 {
@@ -64,6 +65,11 @@ namespace LB4Extract
                 index += 2;
 
                 entries.Add(new LB4Entry(file_size,name_str));
+
+                Util.debug(string.Format("[File Info]New item found."));
+                Util.debug(string.Format("Name:{0}",name_str));
+                Util.debug(string.Format("Size:{0}",Util.formatInt(file_size)));
+                Util.debug("");
             }
 
             //Start loading file contents
@@ -71,8 +77,17 @@ namespace LB4Extract
             {
                 LB4Entry entry = entries[i];
 
+                Util.debug(string.Format("[File contents]New contents found."));
+                Util.debug(string.Format("Start index:{0}",Util.formatInt(index)));
+
+                uint first_index = index;
+
                 byte[] contents = Util.SubBytes(buffer,index,entry.Size);
                 index += entry.Size;
+
+                Util.debug(string.Format("End index:{0}",Util.formatInt(index - 1)));
+                Util.debug(string.Format("Diff:{0}",Util.formatInt(index - first_index)));
+                Util.debug("");
 
                 entries[i].SetContents(contents);
             }
