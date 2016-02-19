@@ -1,7 +1,11 @@
 # Overview
 .NET library to extract LB4 archive
 
-#Sample code
+# Download Executable Utility
+CUI : <https://github.com/redfoxyamato/PM2Extract/releases><br>
+GUI : <https://github.com/redfoxyamato/PM2ExtractGui/releases>
+
+# Sample code
 ```
 
 LB4Extractor ext = new LB4Extractor(lb4Path); //make instance to extract archive.
