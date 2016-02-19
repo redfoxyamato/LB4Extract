@@ -33,9 +33,12 @@ namespace LB4Extract
             }
             return list.ToArray();
         }
-        public static void debug(string str)
+        public static void debug(LB4ArchiveInfo instance,string str)
         {
-            Console.WriteLine(str);
+            if (instance.DebugMode)
+            {
+                Console.WriteLine(str);
+            }
         }
         public static string formatInt(uint i)
         {

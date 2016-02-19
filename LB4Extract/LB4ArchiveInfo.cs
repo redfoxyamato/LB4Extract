@@ -1,18 +1,20 @@
 ﻿
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.IO;
-using System;
 
 namespace LB4Extract
 {
     public class LB4ArchiveInfo
     {
-        private string fileName;
         private ushort count;
+        
         /// <summary>
         /// Name of archive file.
         /// </summary>
+
+        private readonly string fileName;
         string Name
         {
             get { return fileName; }
@@ -28,13 +30,27 @@ namespace LB4Extract
             get { return entries; }
         }
 
+        private bool outputDebug;
+        public bool DebugMode
+        {
+            get { return outputDebug; }
+        }
+
         private byte[] buffer;
 
         public LB4ArchiveInfo(string name)
         {
             fileName = name;
             entries = new List<LB4Entry>();
-            LoadFile();
+            outputDebug = true;
+            if (File.Exists(name))
+            {
+                LoadFile();
+            }
+        }
+        public void DisableDebug()
+        {
+            outputDebug = false;
         }
         public void LoadFile()
         {
@@ -45,6 +61,10 @@ namespace LB4Extract
 
             byte[] fileCountBytes = Util.SubBytes(buffer,4,2);
             count = (ushort)Util.getLEValue(fileCountBytes);
+
+            Util.debug(this, "[Archive Info]");
+            Util.debug(this, string.Format("Entry Count:{0}",Util.formatInt(count)));
+            Util.debug(this, "");
 
             //Start loading file info
             uint index = 0x6;
@@ -66,10 +86,9 @@ namespace LB4Extract
 
                 entries.Add(new LB4Entry(file_size,name_str));
 
-                Util.debug(string.Format("[File Info]New item found."));
-                Util.debug(string.Format("Name:{0}",name_str));
-                Util.debug(string.Format("Size:{0}",Util.formatInt(file_size)));
-                Util.debug("");
+                Util.debug(this,string.Format("[File Info]New file found."));
+                Util.debug(this,string.Format("Name:{0}",name_str));
+                Util.debug(this,string.Format("Size:{0}",Util.formatInt(file_size)));
             }
 
             //Start loading file contents
@@ -77,21 +96,58 @@ namespace LB4Extract
             {
                 LB4Entry entry = entries[i];
 
-                Util.debug(string.Format("[File contents]New contents found."));
-                Util.debug(string.Format("Start index:{0}",Util.formatInt(index)));
+                Util.debug(this, string.Format("[File contents]New contents found."));
+                Util.debug(this, string.Format("Name:{0}",entry.Name));
+                Util.debug(this, string.Format("Start index:{0}",Util.formatInt(index)));
 
                 uint first_index = index;
 
                 byte[] contents = Util.SubBytes(buffer,index,entry.Size);
                 index += entry.Size;
 
-                Util.debug(string.Format("End index:{0}",Util.formatInt(index - 1)));
-                Util.debug(string.Format("Diff:{0}",Util.formatInt(index - first_index)));
-                Util.debug("");
+                Util.debug(this,string.Format("End index:{0}",Util.formatInt(index - 1)));
+                Util.debug(this,string.Format("Diff:{0}",Util.formatInt(index - first_index)));
+                Util.debug(this,"");
 
                 entries[i].SetContents(contents);
             }
-            File.AppendAllText("C:/debug.txt", (buffer.Length / unknown) + "\r\n");
+        }
+        public List<LB4Entry> GetMatchedEntries(string filter)
+        {
+            string regex = convertWildcardToRegex(filter);
+            List<LB4Entry> list = new List<LB4Entry>();
+            foreach(LB4Entry entry in entries)
+            {
+                if(Regex.IsMatch(entry.Name,regex))
+                {
+                    list.Add(entry);
+                }
+            }
+            return list;
+        }
+        public string convertWildcardToRegex(string wildcard)
+        {
+            return Regex.Replace(wildcard,
+                ".",
+                m =>
+                {
+                    string s = m.Value;
+                    if (s.Equals("?"))
+                    {
+                        //?は任意の1文字を示す正規表現(.)に変換
+                        return ".";
+                    }
+                    else if (s.Equals("*"))
+                    {
+                        //*は0文字以上の任意の文字列を示す正規表現(.*)に変換
+                        return ".*";
+                    }
+                    else
+                    {
+                        //上記以外はエスケープする
+                        return Regex.Escape(s);
+                    }
+                });
         }
     }
 }
